@@ -1,5 +1,4 @@
 import './App.css';
-import {useEffect} from "react"
 import 
 {
   BrowserRouter as Router,
@@ -9,6 +8,7 @@ import
 import Login from "./components/Login"
 import Register from "./components/Register"
 import MyPortfolio from './components/MyPortfolio';
+import SecurityInfo from './components/SecurityInfo';
 
 function App() {
   return (
@@ -18,6 +18,7 @@ function App() {
         <Route path = "/" element = {<Login></Login>} />
         <Route path = "/register" element = {<Register></Register>} />
         <Route path = "/portfolio" element = {<MyPortfolio></MyPortfolio>} />
+        <Route path = "/SecurityInfo" element = {<SecurityInfo></SecurityInfo>} />
       </Routes>
     </>
   </Router>
