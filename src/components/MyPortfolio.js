@@ -5,37 +5,38 @@ import Axios from "axios"
 import Paper from '@mui/material/Paper';
 import PieChart from "./PieChart";
 import Assets from "./Assets"
-const MyPortfolio = (props) => {
+import { Typography, Box } from "@mui/material";
+const MyPortfolio = ({ username, setSymbol }) => {
     var options =
     {
         method: 'GET',
         url: 'https://yfapi.net/v6/finance/quote',
         params: { symbols: "" },
         headers: {
-            'x-api-key': 'K85wbL0nvmaNFEhCS2qrJ1ZrAHpgGHcb8HKrzsf7'
+            'x-api-key': 'TNxkOccoIG1y4eznLDk2B3mDW1gjQW6Z3bwpWJaF',
         }
     }
-    
+
     const [myAssets, setMyAssets] = useState([]);
     const [netWorth, setNetWorth] = useState(0.00)
     const [stockValue, setStockValue] = useState(0.00)
     const [cryptoValue, setCryptoValue] = useState(0.00)
     const [cashValue, setCashValue] = useState(0.00);
     const [profitLoss, setProfitLoss] = useState(0.00);
-    const [dummyUser, setDummyUser] = useState("justinwustin200") // later use props.username
+    const [dummyUser, setDummyUser] = useState(username) // later use props.username
     const [currentPriceMap, setCurrentPriceMap] = useState(new Map());
     const [profitLossMap, setProfitLossMap] = useState(new Map());
     var assets;
     var buyingPower;
     // var currentPriceMap = new Map();
-    
+
     // perhaps have a map of the current prices of each asset
     // perhaps have a map of the profit loss for each asset
 
     useEffect(() => {
-        initializePortfolio();       
-    }, []) 
-    
+        initializePortfolio();
+    }, [])
+
     const initializeAssets = async () => {
         let url = `http://localhost:8080/assets/${dummyUser}`
         const response = await Axios.get(url)
@@ -73,11 +74,11 @@ const MyPortfolio = (props) => {
             const response = await Axios.request(options);
             const data = response.data.quoteResponse.result;
             data.forEach((security) => {
-                try {   
+                try {
                     let quantity = getQuantity(assets, security.symbol)
                     let equityString = "EQUITY";
                     let cryptoString = "CRYPTOCURRENCY";
-                    
+
                     if (security.quoteType.toUpperCase() === equityString) {
                         stocks += (quantity * security.regularMarketPrice)
                     }
@@ -152,22 +153,20 @@ const MyPortfolio = (props) => {
         return chunks;
     }
 
-    const initializeProfitLossMap = async (symbols) =>
-    {
+    const initializeProfitLossMap = async (symbols) => {
         let profitLossMap = new Map();
         let url = `http://localhost:8080/trades/profit/${dummyUser}`
         const response = await Axios.get(url);
         const data = response.data;
         symbols.forEach(symbol => {
             data.forEach(profit => {
-                if (profit.symbol.toUpperCase() === symbol)
-                {
+                if (profit.symbol.toUpperCase() === symbol) {
                     let quantity = getQuantity(assets, symbol);
                     let currentPrice = currentPriceMap.get(symbol);
                     let unrealized = currentPrice * quantity;
                     let profitLoss = profit.profit + unrealized
                     profitLossMap.set(symbol, profitLoss)
-                }                   
+                }
             })
         })
         setProfitLossMap(profitLossMap);
@@ -181,20 +180,30 @@ const MyPortfolio = (props) => {
     }
 
     return (
-        <>
-            <Paper>
-            <PieChart 
-                    pieData = {[cashValue, stockValue, cryptoValue]}
-                    labels = {["cash", "stocks", "crypto"]}/>
-                <h1>networth: {netWorth.toFixed(2)}</h1>
-                <h1>stocks: {stockValue.toFixed(2)}</h1>
-                <h1>crypto: {cryptoValue.toFixed(2)}</h1>
-                <h1>cash: {cashValue.toFixed(2)}</h1> 
-            <Assets assets = {myAssets} currentPriceMap = {currentPriceMap} profitLossMap = {profitLossMap}></Assets>                
-            </Paper>
+        <Paper>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    marginTop: '10px'
+                }}
+            >
+
+                <PieChart
+                    pieData={[cashValue.toFixed(2), stockValue.toFixed(2), cryptoValue.toFixed(2)]}
+                    labels={["Cash", "Stocks", "Crypto"]} />
+                <Typography marginTop={2} variant="h3" component='div' fontSize={35}>
+                    Net worth: ${netWorth.toFixed(2)}
+                </Typography>
+
+                <div style={{width: '800px', marginTop: '20px'}}>
+                <Assets assets={myAssets} currentPriceMap={currentPriceMap} profitLossMap={profitLossMap} setSymbol={setSymbol}></Assets>
+                </div>
 
 
-        </>
+            </Box>
+        </Paper>
     )
 }
 
