@@ -76,15 +76,14 @@ const MyPortfolio = ({ username, setSymbol }) => {
             data.forEach((security) => {
                 try {
                     let quantity = getQuantity(assets, security.symbol)
-                    let equityString = "EQUITY";
-                    let cryptoString = "CRYPTOCURRENCY";
 
-                    if (security.quoteType.toUpperCase() === equityString) {
+                    if (security.quoteType.toUpperCase() === "EQUITY") {
                         stocks += (quantity * security.regularMarketPrice)
                     }
-                    else if (security.quoteType.toUpperCase() === cryptoString) {
+                    else if (security.quoteType.toUpperCase() === "CRYPTOCURRENCY") {
                         crypto += (quantity * security.regularMarketPrice)
                     }
+                    
                     setCurrentPriceMap(currentPriceMap => currentPriceMap.set(security.symbol, security.regularMarketPrice))
                 }
                 catch (e) {
@@ -107,12 +106,11 @@ const MyPortfolio = ({ username, setSymbol }) => {
                     data.forEach((security) => {
                         try {
                             let quantity = getQuantity(assets, security.symbol)
-                            let equityString = "EQUITY";
-                            let cryptoString = "CRYPTOCURRENCY";
-                            if (security.quoteType.toUpperCase() === equityString) {
+
+                            if (security.quoteType.toUpperCase() === "EQUITY") {
                                 stocks += (quantity * security.regularMarketPrice)
                             }
-                            else if (security.quoteType.toUpperCase() === cryptoString) {
+                            else if (security.quoteType.toUpperCase() === "CRYPTOCURRENCY") {
                                 crypto += (quantity * security.regularMarketPrice)
                             }
 
