@@ -1,0 +1,7 @@
+1. Make sure that the buy feature is functioning properly on the UI
+
+2. Make sure to correctly display the response message from the trade API call (look into the state variables)
+
+3. Reset all state of the trade modal when you exit (store the inital state somewhere)
+
+4. Make sure that when another trade occurs that a new alert displays (perhaps toggle the state of the openAlert state variable)

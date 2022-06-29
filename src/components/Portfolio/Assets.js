@@ -5,15 +5,14 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Title from './Title';
+import Title from '../Title';
 import { useNavigate, Link} from 'react-router-dom';
-import SecurityInfo from './SecurityInfo';
 
 function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Assets({assets, currentPriceMap, profitLossMap, setSymbol}) {
+export default function Assets({assets, currentPriceMap, profitLossMap}) {
   let navigate = useNavigate();
 
   function getPrice(symbol)
@@ -48,11 +47,6 @@ export default function Assets({assets, currentPriceMap, profitLossMap, setSymbo
       return "+"
   }
 
-  // function handleClick(symbol){
-  //   setSymbol(symbol)
-  //   navigate('/securityinfo')
-  // }
-
   return (
     <React.Fragment>
       <Title>My Assets</Title>
@@ -69,7 +63,7 @@ export default function Assets({assets, currentPriceMap, profitLossMap, setSymbo
         <TableBody>
           {assets.map((row) => (
             <TableRow key={row.id}>
-              <TableCell><Link to='/securityinfo' state={row.symbol}>{row.symbol}</Link></TableCell>
+              <TableCell><Link to='/securityinfo' state={{symbol: row.symbol}}>{row.symbol}</Link></TableCell>
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.quantity}</TableCell>
               <TableCell>${getPrice(row.symbol)}</TableCell>

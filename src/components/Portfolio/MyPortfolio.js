@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import PieChart from "./PieChart";
 import Assets from "./Assets"
 import { Typography, Box } from "@mui/material";
-const MyPortfolio = ({ username, setSymbol }) => {
+const MyPortfolio = ({username}) => {
     var options =
     {
         method: 'GET',
@@ -196,7 +196,7 @@ const MyPortfolio = ({ username, setSymbol }) => {
                 </Typography>
 
                 <div style={{width: '800px', marginTop: '20px'}}>
-                <Assets assets={myAssets} currentPriceMap={currentPriceMap} profitLossMap={profitLossMap} setSymbol={setSymbol}></Assets>
+                <Assets assets={myAssets} currentPriceMap={currentPriceMap} profitLossMap={profitLossMap}></Assets>
                 </div>
 
 

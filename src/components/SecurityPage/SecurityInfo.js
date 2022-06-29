@@ -1,15 +1,18 @@
 import { Card, CardContent } from '@mui/material'
 import Box from '@mui/material/Box'
-import { Typography, ToggleButtonGroup, ToggleButton, Button } from '@mui/material'
+import { Typography, ToggleButtonGroup, ToggleButton } from '@mui/material'
 import { Grid } from '@mui/material'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { useLocation } from 'react-router'
 import Axios from 'axios'
 import LineChart from './LineChart'
-const SecurityInfo = () => {
+import TradeDialog from './TradeDialog'
+
+const SecurityInfo = ({ username }) => {
     const location = useLocation()
-    const symbol = location.state
+    // @ts-ignore
+    const symbol = location.state.symbol;
 
     var quote =
     {
@@ -44,6 +47,7 @@ const SecurityInfo = () => {
     const [chartLabels, setChartLabels] = useState([])
     const [chartData, setChartData] = useState([])
     const [chartRange, setChartRange] = useState('1mo')
+    const [quoteType, setQuoteType] = useState('');
 
     useEffect(() => {
         // get api data here
@@ -67,6 +71,7 @@ const SecurityInfo = () => {
         setPrevClose(quoteData.regularMarketPreviousClose)
         setPriceDif(quoteData.regularMarketChange);
         setPriceDifPercentage(quoteData.regularMarketChangePercent)
+        setQuoteType(quoteData.quoteType)
     }
 
     const fetchChartData = async () => {
@@ -124,8 +129,7 @@ const SecurityInfo = () => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                
+                alignItems: 'center'
             }}
         >
             <Grid container direction='row'>
@@ -170,7 +174,7 @@ const SecurityInfo = () => {
                 </Grid>
             </Grid>
 
-            <div style={{ width: '1000px', height: '1000px', marginTop: '50px' }}>
+            <Box sx={{ width: '1000px', marginTop: '50px'}}>
                 <Grid container direction='row'>
                     <Grid item>
                         <ToggleButtonGroup value={chartRange} sx={{ marginLeft: '30px' }} onChange={handleChartRange} exclusive>
@@ -184,12 +188,18 @@ const SecurityInfo = () => {
                             <ToggleButton value='max'>All</ToggleButton>
                         </ToggleButtonGroup>
                     </Grid>
-                    <Grid item marginLeft ='auto'>
-                        <Button sx={{ width: '400px', height: '50px'}} variant='contained' size='large'>Trade</Button>
+                    <Grid item marginLeft='auto'>
+                        <TradeDialog username={username}
+                            currentPrice={currentPrice}
+                            symbol={symbol}
+                            quoteType={quoteType}
+                            name={companyName}
+                        >
+                        </TradeDialog>
                     </Grid>
                 </Grid>
                 <LineChart labels={chartLabels} data={chartData}></LineChart>
-            </div>
+            </Box>
         </Box >
     )
 

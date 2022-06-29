@@ -1,32 +1,45 @@
 import './App.css';
-import 
-{
+import {
   BrowserRouter as Router,
   Route,
   Routes,
 } from "react-router-dom";
-import Login from "./components/Login"
-import Register from "./components/Register"
-import MyPortfolio from './components/MyPortfolio';
+import Login from "./components/LoginRegister/Login"
+import Register from "./components/LoginRegister/Register"
+import MyPortfolio from './components/Portfolio/MyPortfolio';
 import { useState } from 'react';
-import SecurityInfo from './components/SecurityInfo'
+import SecurityInfo from './components/SecurityPage/SecurityInfo'
+import HomePage from './components/HomePage/HomePage';
+import Navbar from './Navbar';
+
 function App() {
-  const [symbol, setSymbol] = useState("")
   const [userInfo, setUserInfo] = useState({
-    isLoggedIn: false,
+    isLoggedIn: true,
     username: "justinwustin200"
   })
+
+  function ShowNavbar() {
+    if (userInfo.isLoggedIn) {
+      return <Navbar></Navbar>
+    }
+    else return null
+  }
+
   return (
-  <Router>
     <>
-      <Routes>
-        <Route path = "/" element = {<Login></Login>} />
-        <Route path = "/register" element = {<Register></Register>} />
-        <Route path = "/portfolio" element = {<MyPortfolio username = {userInfo.username} setSymbol = {setSymbol}></MyPortfolio>} />
-        <Route path = "/securityinfo" element = {<SecurityInfo symbol = {symbol}></SecurityInfo>} />
-      </Routes>      
+      <ShowNavbar></ShowNavbar>
+      <Router>
+        <>
+          <Routes>
+            <Route path="/" element={<Login></Login>} />
+            <Route path="/register" element={<Register></Register>} />
+            <Route path="/portfolio" element={<MyPortfolio username={userInfo.username}></MyPortfolio>} />
+            <Route path="/securityinfo" element={<SecurityInfo username={userInfo.username}></SecurityInfo>} />
+            <Route path="/home" element={<HomePage></HomePage>} />
+          </Routes>
+        </>
+      </Router>
     </>
-  </Router>
   )
 }
 
