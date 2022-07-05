@@ -11,7 +11,8 @@ export default function HomePage() {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center'
+                alignItems: 'center',
+                marginTop: '10px'
             }}
         >
             <TrendingSecurities></TrendingSecurities>

@@ -27,9 +27,9 @@ function App() {
 
   return (
     <>
-      <ShowNavbar></ShowNavbar>
       <Router>
         <>
+        <ShowNavbar></ShowNavbar>
           <Routes>
             <Route path="/" element={<Login></Login>} />
             <Route path="/register" element={<Register></Register>} />

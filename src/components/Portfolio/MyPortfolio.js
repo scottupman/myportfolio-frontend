@@ -5,7 +5,9 @@ import Axios from "axios"
 import Paper from '@mui/material/Paper';
 import PieChart from "./PieChart";
 import Assets from "./Assets"
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Grid } from "@mui/material";
+import Trades from "./Trades";
+import ProfitLoss from "./ProfitLoss";
 const MyPortfolio = ({username}) => {
     var options =
     {
@@ -23,29 +25,25 @@ const MyPortfolio = ({username}) => {
     const [cryptoValue, setCryptoValue] = useState(0.00)
     const [cashValue, setCashValue] = useState(0.00);
     const [profitLoss, setProfitLoss] = useState(0.00);
-    const [dummyUser, setDummyUser] = useState(username) // later use props.username
     const [currentPriceMap, setCurrentPriceMap] = useState(new Map());
     const [profitLossMap, setProfitLossMap] = useState(new Map());
     var assets;
     var buyingPower;
-    // var currentPriceMap = new Map();
-
-    // perhaps have a map of the current prices of each asset
-    // perhaps have a map of the profit loss for each asset
 
     useEffect(() => {
         initializePortfolio();
+        profitLossMap.forEach(elem => console.log(elem))
     }, [])
 
     const initializeAssets = async () => {
-        let url = `http://localhost:8080/assets/${dummyUser}`
+        let url = `http://localhost:8080/assets/${username}`
         const response = await Axios.get(url)
         const data = response.data;
         return data;
     }
 
     const getBuyingPower = async () => {
-        let url = `http://localhost:8080/user/${dummyUser}`
+        let url = `http://localhost:8080/user/${username}`
         const response = await Axios.get(url);
         const data = response.data.cashValue;
         return data;
@@ -65,7 +63,7 @@ const MyPortfolio = ({username}) => {
         let stocks = 0.00;
         let crypto = 0.00;
 
-        let symbols = await getSymbols();
+        let symbols = await getSymbols(); // symbols that user owns
 
         const partitionSize = 10;
         if (symbols.length < partitionSize) {
@@ -153,7 +151,7 @@ const MyPortfolio = ({username}) => {
 
     const initializeProfitLossMap = async (symbols) => {
         let profitLossMap = new Map();
-        let url = `http://localhost:8080/trades/profit/${dummyUser}`
+        let url = `http://localhost:8080/trades/profit/${username}`
         const response = await Axios.get(url);
         const data = response.data;
         symbols.forEach(symbol => {
@@ -171,7 +169,7 @@ const MyPortfolio = ({username}) => {
     }
 
     const getSymbols = async () => {
-        let url = `http://localhost:8080/assets/${dummyUser}/symbols`
+        let url = `http://localhost:8080/assets/${username}/symbols`
         const response = await Axios.get(url);
         const data = response.data;
         return data;
@@ -184,7 +182,7 @@ const MyPortfolio = ({username}) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    marginTop: '10px'
+                    marginTop: '10px',
                 }}
             >
 
@@ -195,9 +193,21 @@ const MyPortfolio = ({username}) => {
                     Net worth: ${netWorth.toFixed(2)}
                 </Typography>
 
-                <div style={{width: '800px', marginTop: '20px'}}>
-                <Assets assets={myAssets} currentPriceMap={currentPriceMap} profitLossMap={profitLossMap}></Assets>
-                </div>
+                <Grid container spacing = {2} direction = "column" style={{width: '1000px'}}>
+                    <Grid item>
+                        <Assets assets={myAssets} currentPriceMap={currentPriceMap} profitLossMap={profitLossMap}></Assets>
+                    </Grid>
+                    <Grid item>
+                        <Trades username = {username}></Trades>
+                    </Grid>
+                    <Grid item>
+                        <ProfitLoss username = {username}></ProfitLoss>
+                    </Grid>
+                </Grid>
+                {/* <div style={{width: '800px', marginTop: '20px'}}> */}
+                
+                
+                {/* </div> */}
 
 
             </Box>

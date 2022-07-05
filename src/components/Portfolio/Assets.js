@@ -1,19 +1,17 @@
 import * as React from 'react';
-import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from '../Title';
-import { useNavigate, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 function preventDefault(event) {
   event.preventDefault();
 }
 
 export default function Assets({assets, currentPriceMap, profitLossMap}) {
-  let navigate = useNavigate();
 
   function getPrice(symbol)
   {

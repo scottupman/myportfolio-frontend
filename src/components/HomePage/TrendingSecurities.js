@@ -1,4 +1,4 @@
-import { Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
 import Axios from "axios"
 import Title from "../Title"
 import React from "react";
@@ -45,40 +45,40 @@ export default function TrendingSecurities() {
 
     function toTitleCase(str) {
         return str.replace(
-          /\w\S*/g,
-          function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          }
+            /\w\S*/g,
+            function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
         );
-      }
+    }
 
     return (
         <React.Fragment>
-            <Title>Trending</Title>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Symbol</TableCell>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Type</TableCell>
-                        <TableCell>Price</TableCell>
-                        <TableCell>Price Change (24h)</TableCell>
-                        <TableCell>%24h</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {trendingSecurities.map((row) => (
-                        <TableRow key={row.id}>
-                            <TableCell><Link to ="/securityinfo" state={{symbol: row.symbol}}>{row.symbol}</Link></TableCell>
-                            <TableCell>{row.shortName}</TableCell>
-                            <TableCell>{toTitleCase(row.quoteType)}</TableCell>
-                            <TableCell>${row.regularMarketPrice}</TableCell>
-                            <TableCell style={{ color: setTextColor(row.regularMarketChange)}}>{insertPositive(row.regularMarketChange)}{row.regularMarketChange.toFixed(2)}</TableCell>
-                            <TableCell style={{ color: setTextColor(row.regularMarketChangePercent)}}>{insertPositive(row.regularMarketChangePercent)}{row.regularMarketChangePercent.toFixed(2)}</TableCell>
+                <Title>Trending</Title>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Symbol</TableCell>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Type</TableCell>
+                            <TableCell>Price</TableCell>
+                            <TableCell>Price Change (24h)</TableCell>
+                            <TableCell>%24h</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHead>
+                    <TableBody>
+                        {trendingSecurities.map((row) => (
+                            <TableRow key={row.id}>
+                                <TableCell><Link to="/securityinfo" state={{ symbol: row.symbol }}>{row.symbol}</Link></TableCell>
+                                <TableCell>{row.shortName}</TableCell>
+                                <TableCell>{toTitleCase(row.quoteType)}</TableCell>
+                                <TableCell>${row.regularMarketPrice}</TableCell>
+                                <TableCell style={{ color: setTextColor(row.regularMarketChange) }}>{insertPositive(row.regularMarketChange)}{row.regularMarketChange.toFixed(2)}</TableCell>
+                                <TableCell style={{ color: setTextColor(row.regularMarketChangePercent) }}>{insertPositive(row.regularMarketChangePercent)}{row.regularMarketChangePercent.toFixed(2)}%</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
         </React.Fragment>
     )
 

@@ -48,6 +48,7 @@ const SecurityInfo = ({ username }) => {
     const [chartData, setChartData] = useState([])
     const [chartRange, setChartRange] = useState('1mo')
     const [quoteType, setQuoteType] = useState('');
+    const [isLessThanOne, setIsLessThanOne] = useState(false)
 
     useEffect(() => {
         // get api data here
@@ -57,6 +58,13 @@ const SecurityInfo = ({ username }) => {
     useEffect(() => {
         fetchChartData();
     }, [chartRange])
+
+    useEffect(() => {
+        if (currentPrice < 1)
+            setIsLessThanOne(true)
+        else
+            setIsLessThanOne(false)
+    }, [currentPrice])
 
     const fetchData = async () => {
         quote.params.symbols = symbol;
@@ -124,12 +132,20 @@ const SecurityInfo = ({ username }) => {
         }
     };
 
+    const displayMonetaryValue = (value) =>{
+        if (isLessThanOne)
+            return value.toFixed(6);
+        else
+            return value.toFixed(2);
+    }
+
     return (
         <Box
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center'
+                alignItems: 'center',
+                marginTop: '10px'
             }}
         >
             <Grid container direction='row'>
@@ -142,12 +158,12 @@ const SecurityInfo = ({ username }) => {
                             <Grid container spacing={2} direction='row'>
                                 <Grid item>
                                     <Typography sx={{ fontSize: 35 }} variant='h3' component='div'>
-                                        ${currentPrice.toFixed(2)}
+                                        ${displayMonetaryValue(currentPrice)}
                                     </Typography>
                                 </Grid>
                                 <Grid item>
                                     <Typography sx={{ fontSize: 20, marginTop: 0.5 }} style={{ color: setTextColor() }} variant='h6' component='div'>
-                                        {insertPositive()} {priceDif.toFixed(2)} ({priceDifPercentage.toFixed(2)}%)
+                                        {insertPositive()} {displayMonetaryValue(priceDif)} ({priceDifPercentage.toFixed(2)}%)
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -158,16 +174,16 @@ const SecurityInfo = ({ username }) => {
                     <Card>
                         <CardContent>
                             <Typography variant='h6' component='div'>
-                                Open: ${open.toFixed(2)}
+                                Open: ${displayMonetaryValue(open)}
                             </Typography>
                             <Typography variant='h6' component='div'>
-                                High: ${high.toFixed(2)}
+                                High: ${displayMonetaryValue(high)}
                             </Typography>
                             <Typography variant='h6' component='div'>
-                                Low: ${low.toFixed(2)}
+                                Low: ${displayMonetaryValue(low)}
                             </Typography>
                             <Typography variant='h6' component='div'>
-                                Previous Close: ${prevClose.toFixed(2)}
+                                Previous Close: ${displayMonetaryValue(prevClose)}
                             </Typography>
                         </CardContent>
                     </Card>

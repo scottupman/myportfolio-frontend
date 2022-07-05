@@ -24,7 +24,7 @@ export default function TradeDialog(props) {
     const symbol = props.symbol;
     const currentPrice = props.currentPrice;
     const quoteType = props.quoteType;
-    const name = props.companyName
+    const name = props.name
 
     const [open, setOpen] = useState(false)
     const [openAlert, setOpenAlert] = useState(false)
@@ -33,7 +33,7 @@ export default function TradeDialog(props) {
     const [tradeType, setTradeType] = useState("Buy")
     const [method, setMethod] = useState("Quantity")
     const [subtotal, setSubtotal] = useState(0.00)
-    const [disableTrade, setDisableTrade] = useState(false)
+    //const [disableTrade, setDisableTrade] = useState(false)
 
     const [myQuantity, setMyQuantity] = useState(0.00)
     const [buyingPower, setBuyingPower] = useState(0.00);
@@ -129,8 +129,8 @@ export default function TradeDialog(props) {
     }
 
     function TradeButton(){
-        if (quoteType.toUpperCase() === "INDEX" || quoteType.toUpperCase() === "FUTURE")
-            return <h1></h1>;
+        if (quoteType.toUpperCase() !== "CRYPTOCURRENCY" && quoteType.toUpperCase() !== "EQUITY")
+            return null
         
         return <Button sx={{ width: '400px', height: '50px' }} variant='contained' size='large' onClick={handleClickOpen}>Trade</Button>
     }
@@ -175,6 +175,7 @@ export default function TradeDialog(props) {
         }
         else quantity = input; // input here is quantity
 
+        let timestamp = Math.round((new Date()).getTime() / 1000);
         let url = "http://localhost:8080/trades"
         let response = null
         try {
@@ -185,7 +186,8 @@ export default function TradeDialog(props) {
                 type: tradeType,
                 securityType: quoteType,
                 quantity: quantity,
-                price: currentPrice
+                price: currentPrice,
+                timestamp: timestamp
             })
 
             setExceptionOccured(false)
