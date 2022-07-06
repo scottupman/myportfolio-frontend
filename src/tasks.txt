@@ -1,8 +1,7 @@
 1. implement autocomplete feature on search bar (medium)
 2. Determine if search results = 0 for autocomplete (medium)
 3. Implement deposit/withdraw feature (easy)
-4. Show Trade history (easy)
-5. Show Profit/Loss table (easy)
+5. Show Profit/Loss table (medium)
 6. Implement Login/Registration page (should be the same from the previous project)
 
 After this you should be done :)

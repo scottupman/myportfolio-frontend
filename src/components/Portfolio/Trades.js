@@ -68,7 +68,7 @@ export default function Trades({username}){
           </TableRow>
         </TableHead>
         <TableBody>
-          {trades.map((trade) => (
+          {trades.map(trade => (
             <TableRow key={trade.id}>
               <TableCell><Link to='/securityinfo' state={{symbol: trade.symbol}}>{trade.symbol}</Link></TableCell>
               <TableCell>{trade.name}</TableCell>

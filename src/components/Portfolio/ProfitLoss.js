@@ -6,27 +6,26 @@ import React from "react"
 import { Link } from "react-router-dom"
 export default function ProfitLoss(props) {
 
+    // Figure out why profitLossElements doesn't show in the table
+
     const username = props.username
 
-    const [trades, setTrades] = useState([])
-    const [currentPriceMap, setCurrentPriceMap] = useState(new Map())
     const [profitLossElements, setProfitLossElements] = useState([])
-    const [profitLossMap, setProfitLossMap] = useState(new Map())
+
+
 
     useEffect(() => {
-        getTrades()
+        console.log("initial useEffect ran")
+        initializeProfitLossElems();
     }, [])
 
     useEffect(() => {
-        initializeProfitLossMap();
-    }, [trades])
+        console.log("profitLossElements updated")
+        console.log(profitLossElements)
+        console.log("profitLossElements.length: " + profitLossElements.length)
+    }, [profitLossElements])
 
-    const getTrades = async () => {
-        let url = `http://localhost:8080/trades/${username}`
-        const response = await Axios.get(url);
-        const trades = response.data;
-        setTrades(trades);
-    }
+
 
     const getQuantity = async (symbol) => {
         let url = `http://localhost:8080/assets/${username}/quantity/${symbol}`
@@ -35,12 +34,22 @@ export default function ProfitLoss(props) {
         return data;
     }
 
-    const getName = (trades, symbol) => {
-        trades.forEach(trade => {
-            if (trade.symbol.toUpperCase() === symbol.toUpperCase())
-                return trade.name;
-        })
+    const getName = async (symbol) => {
+        const url = `http://localhost:8080/trades/name/${symbol}`
+        const response = await Axios.get(url);
+        const data = response.data;
+        return data;
     }
+
+    // const getName = (trades, symbol) => {
+    //     trades.forEach(trade => {
+    //         if (trade.symbol.toUpperCase() === symbol.toUpperCase())
+    //         {
+    //             console.log(trade.name)
+    //             return trade.name
+    //         }
+    //     })
+    // }
 
     const getProfitLossOnSymbols = async (symbols) => {
         let url = `http://localhost:8080/trades/profit/${username}`
@@ -52,13 +61,6 @@ export default function ProfitLoss(props) {
     const getTradedSymbols = async () => {
         let url = `http://localhost:8080/trades/${username}/symbols`
         const response = await Axios.get(url)
-        const data = response.data;
-        return data;
-    }
-
-    const getOwnedSymbols = async () => {
-        let url = `http://localhost:8080/assets/${username}/symbols`
-        const response = await Axios.get(url);
         const data = response.data;
         return data;
     }
@@ -82,8 +84,8 @@ export default function ProfitLoss(props) {
 
     const createCurrentPriceMap = async () => {
         let currentPriceMap = new Map();
-        let ownedSymbols = await getOwnedSymbols(); // symbols that user owns
-        let symbolString = ownedSymbols.join(",");
+        let tradedSymbols = await getTradedSymbols();
+        let symbolString = tradedSymbols.join(",");
 
         const quotes = await getQuotes(symbolString);
 
@@ -94,31 +96,32 @@ export default function ProfitLoss(props) {
         return currentPriceMap;
     }
 
-    const initializeProfitLossMap = async () => {
-        let profitLossMap = new Map();
-        let currentPriceMap = await createCurrentPriceMap();
-
-        let tradedSymbols = await getTradedSymbols()
-        let profitLossOnSymbols = await getProfitLossOnSymbols();
-
-        let profitLossElems = [];
-
+    const populateProfitLossElems = (tradedSymbols, profitLossOnSymbols, currentPriceMap) => {
         tradedSymbols.forEach(symbol => {
-            profitLossOnSymbols.forEach(async element => {
+            profitLossOnSymbols.forEach(element => {
                 if (element.symbol === symbol) {
-                    let quantity = await getQuantity(symbol);
-                    let currentPrice = currentPriceMap.get(symbol);
-                    let unrealized = currentPrice * quantity;
-                    let profitLoss = element.profit + unrealized
-                    profitLossMap.set(symbol, profitLoss)
-
-                    // perhaps this could work? create a new profitLossElem
-                    profitLossElems.push(createProfitLossElem(symbol, getName(trades, symbol), profitLoss))
-                    
+                    getQuantity(symbol).then(quantity => {
+                        let currentPrice = currentPriceMap.get(symbol);
+                        let unrealized = currentPrice * quantity;
+                        let profitLoss = element.profit + unrealized
+                        getName(symbol).then(name => {
+                            let profitLossElem = createProfitLossElem(symbol, name, profitLoss)
+                            //profitLossElems.push(profitLossElem)
+                            if (profitLossElements.length < tradedSymbols.length)
+                                setProfitLossElements(state => [...state, profitLossElem])
+                        })
+                    });
                 }
             });
         })
-        setProfitLossElements(profitLossElems);
+    }
+
+    const initializeProfitLossElems = async () => {
+        let currentPriceMap = await createCurrentPriceMap();
+        let tradedSymbols = await getTradedSymbols()
+        let profitLossOnSymbols = await getProfitLossOnSymbols();
+
+        populateProfitLossElems(tradedSymbols, profitLossOnSymbols, currentPriceMap)
     }
 
     const createProfitLossElem = (symbol, name, profitLoss) => {
@@ -131,6 +134,26 @@ export default function ProfitLoss(props) {
 
         return profitLossElem;
     }
+
+    function insertPositive(profitLoss) {
+        if (profitLoss > 0)
+            return "+"
+    }
+
+    const displayMonetaryValue = (value) => {
+        if (value < 1)
+            return value.toFixed(6);
+        else
+            return value.toFixed(2);
+    }
+
+    function setTextColor(profitLoss) {
+        if (profitLoss > 0)
+            return "green"
+        else if (profitLoss < 0)
+            return "red"
+    }
+
     return (
         <React.Fragment>
             <Title>P&L</Title>
@@ -143,13 +166,15 @@ export default function ProfitLoss(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {profitLossElements.map(row => (
-                        <TableRow key={row.id}>
-                            <TableCell><Link to='/securityinfo' state={{ symbol: row.symbol }}>{row.symbol}</Link></TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.profitLoss}</TableCell>
-                        </TableRow>
-                    ))}
+                    {profitLossElements.map(row => {
+                        return (
+                            <TableRow key={row.symbol}>
+                                <TableCell><Link to='/securityinfo' state={{ symbol: row.symbol }}>{row.symbol}</Link></TableCell>
+                                <TableCell>{row.name}</TableCell>
+                                <TableCell style = {{color: setTextColor(row.profitLoss)}}>{insertPositive((row.profitLoss))}{displayMonetaryValue(row.profitLoss)}</TableCell>
+                            </TableRow>
+                        )
+                    })}
                 </TableBody>
             </Table>
         </React.Fragment>

@@ -32,7 +32,6 @@ const MyPortfolio = ({username}) => {
 
     useEffect(() => {
         initializePortfolio();
-        profitLossMap.forEach(elem => console.log(elem))
     }, [])
 
     const initializeAssets = async () => {
