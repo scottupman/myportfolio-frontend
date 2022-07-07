@@ -12,6 +12,9 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router';
 import Autocomplete from '@mui/material/Autocomplete';
+import TradeDialog from './components/SecurityPage/TradeDialog';
+import DepositDialog from './DepositDialog';
+import WithdrawDialog from './WithdrawDialog';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -53,11 +56,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function Navbar() {
+export default function Navbar({username}) {
 
   let navigate = useNavigate()
 
   const pages = ["home", "portfolio"]
+  const [showDeposit, setShowDeposit] = React.useState(false)
+  const [showWithdraw, setShowWithdraw] = React.useState(false)
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -117,6 +122,9 @@ export default function Navbar() {
                 {page}
               </Button>
             ))}
+            
+            <DepositDialog username = {username}></DepositDialog>
+            <WithdrawDialog username = {username}></WithdrawDialog>
           </Box>
           <Search>
             <SearchIconWrapper>

@@ -12,20 +12,9 @@ export default function ProfitLoss(props) {
 
     const [profitLossElements, setProfitLossElements] = useState([])
 
-
-
     useEffect(() => {
-        console.log("initial useEffect ran")
         initializeProfitLossElems();
     }, [])
-
-    useEffect(() => {
-        console.log("profitLossElements updated")
-        console.log(profitLossElements)
-        console.log("profitLossElements.length: " + profitLossElements.length)
-    }, [profitLossElements])
-
-
 
     const getQuantity = async (symbol) => {
         let url = `http://localhost:8080/assets/${username}/quantity/${symbol}`
@@ -40,16 +29,6 @@ export default function ProfitLoss(props) {
         const data = response.data;
         return data;
     }
-
-    // const getName = (trades, symbol) => {
-    //     trades.forEach(trade => {
-    //         if (trade.symbol.toUpperCase() === symbol.toUpperCase())
-    //         {
-    //             console.log(trade.name)
-    //             return trade.name
-    //         }
-    //     })
-    // }
 
     const getProfitLossOnSymbols = async (symbols) => {
         let url = `http://localhost:8080/trades/profit/${username}`
@@ -140,11 +119,8 @@ export default function ProfitLoss(props) {
             return "+"
     }
 
-    const displayMonetaryValue = (value) => {
-        if (value < 1)
-            return value.toFixed(6);
-        else
-            return value.toFixed(2);
+    const displayProfitLoss = (value) => {
+        return value.toFixed(2)
     }
 
     function setTextColor(profitLoss) {
@@ -154,6 +130,7 @@ export default function ProfitLoss(props) {
             return "red"
     }
 
+    // could also show total profit/loss
     return (
         <React.Fragment>
             <Title>P&L</Title>
@@ -171,7 +148,7 @@ export default function ProfitLoss(props) {
                             <TableRow key={row.symbol}>
                                 <TableCell><Link to='/securityinfo' state={{ symbol: row.symbol }}>{row.symbol}</Link></TableCell>
                                 <TableCell>{row.name}</TableCell>
-                                <TableCell style = {{color: setTextColor(row.profitLoss)}}>{insertPositive((row.profitLoss))}{displayMonetaryValue(row.profitLoss)}</TableCell>
+                                <TableCell style = {{color: setTextColor(row.profitLoss)}}>{insertPositive((row.profitLoss))}{displayProfitLoss(row.profitLoss)}</TableCell>
                             </TableRow>
                         )
                     })}

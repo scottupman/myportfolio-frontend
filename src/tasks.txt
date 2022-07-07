@@ -1,7 +1,8 @@
 1. implement autocomplete feature on search bar (medium)
 2. Determine if search results = 0 for autocomplete (medium)
-3. Implement deposit/withdraw feature (easy)
-5. Show Profit/Loss table (medium)
-6. Implement Login/Registration page (should be the same from the previous project)
+3. Implement Login/Registration page (should be the same from the previous project)
+4. Implement user page showing credentials (medium)
+
+// RAPIDAPI subscription has reached maximum api calls, make sure you can still use it
 
 After this you should be done :)

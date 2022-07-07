@@ -8,6 +8,9 @@ import Assets from "./Assets"
 import { Typography, Box, Grid } from "@mui/material";
 import Trades from "./Trades";
 import ProfitLoss from "./ProfitLoss";
+
+// perhaps try to migrate the api calls from profitLoss to here
+
 const MyPortfolio = ({username}) => {
     var options =
     {
@@ -186,15 +189,19 @@ const MyPortfolio = ({username}) => {
             >
 
                 <PieChart
-                    pieData={[cashValue.toFixed(2), stockValue.toFixed(2), cryptoValue.toFixed(2)]}
+                    pieData={
+                        [(Math.floor(cashValue * 100) / 100).toFixed(2), 
+                        (Math.floor(stockValue * 100) / 100).toFixed(2), 
+                        (Math.floor(cryptoValue * 100) / 100).toFixed(2)]
+                    }
                     labels={["Cash", "Stocks", "Crypto"]} />
                 <Typography marginTop={2} variant="h3" component='div' fontSize={35}>
-                    Net worth: ${netWorth.toFixed(2)}
+                    Net worth: ${Math.floor(netWorth * 100) / 100}
                 </Typography>
 
                 <Grid container spacing = {2} direction = "column" style={{width: '1000px'}}>
                     <Grid item>
-                        <Assets assets={myAssets} currentPriceMap={currentPriceMap} profitLossMap={profitLossMap}></Assets>
+                        <Assets assets={myAssets} currentPriceMap={currentPriceMap}></Assets>
                     </Grid>
                     <Grid item>
                         <Trades username = {username}></Trades>

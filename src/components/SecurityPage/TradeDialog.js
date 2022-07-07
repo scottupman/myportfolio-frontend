@@ -15,6 +15,7 @@ import {
     Slide,
     Alert
 } from "@mui/material"
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 import Axios from "axios"
 import { Box } from "@mui/system"
@@ -26,6 +27,8 @@ export default function TradeDialog(props) {
     const quoteType = props.quoteType;
     const name = props.name
 
+    const regex = /^\d+(\.\d{0,2})?$/
+
     const [open, setOpen] = useState(false)
     const [openAlert, setOpenAlert] = useState(false)
     const [alertMsg, setAlertMsg] = useState('')
@@ -33,11 +36,10 @@ export default function TradeDialog(props) {
     const [tradeType, setTradeType] = useState("Buy")
     const [method, setMethod] = useState("Quantity")
     const [subtotal, setSubtotal] = useState(0.00)
-    //const [disableTrade, setDisableTrade] = useState(false)
 
     const [myQuantity, setMyQuantity] = useState(0.00)
     const [buyingPower, setBuyingPower] = useState(0.00);
-    const [input, setInput] = useState(0)
+    const [input, setInput] = useState(-1)
 
     const resetState = () =>{
         setOpenAlert(false)
@@ -46,7 +48,7 @@ export default function TradeDialog(props) {
         setTradeType("Buy")
         setMethod("Quantity")
         setSubtotal(0.00)
-        setInput(0)
+        setInput(-1)
     }
     
     useEffect(() => {
@@ -99,11 +101,24 @@ export default function TradeDialog(props) {
     const handleTextField = (e) => {
         let value = e.target.value
         if (value === "")
-            value = 0
-        if (quoteType.toUpperCase() === "EQUITY")
+            value = -1
+        
+        if (value === -1)
+            setInput(parseFloat(value))
+        else if (quoteType.toUpperCase() === "EQUITY")
             setInput(Math.floor(value))
         else
-            setInput(parseFloat(value))
+        {
+            if (method.toUpperCase() === "CASH")
+            {
+                if (regex.test(value))
+                    setInput(parseFloat(value))
+            }
+            else
+                setInput(parseFloat(value))
+        }
+            
+            
     }
 
     function FooterDetails() {
@@ -111,7 +126,7 @@ export default function TradeDialog(props) {
             return (
                 <div>
                     <Typography>
-                        Buying power: ${buyingPower.toFixed(2)}
+                        Buying power: ${(Math.floor(buyingPower * 100) / 100).toFixed(2)}
                     </Typography>
                 </div>
             )
@@ -233,22 +248,22 @@ export default function TradeDialog(props) {
                     <TextField sx={{ marginTop: '40px' }} type="number"
                         id="standard-basic"
                         variant="standard"
-                        value={input === 0 ? "" : input}
+                        value={input < 0 ? "" : input}
                         color="primary"
                         inputProps={{ min: 0, style: { fontSize: 40, textAlign: 'center' } }}
                         InputProps={{
                             disableUnderline: true,
-                            startAdornment: (<InputAdornment position="start">{method === "Cash" ? "$" : null}</InputAdornment>)
+                            startAdornment: (<InputAdornment position="start">{method === "Cash" ? <AttachMoneyIcon fontSize="large"/> : null}</InputAdornment>)
                         }}
                         placeholder={method}
                         onChange={handleTextField}
                     />
                     <DialogContent>
-                        <Typography variant="h5">Subtotal: ${subtotal.toFixed(2)}</Typography>
+                        <Typography variant="h5">Subtotal: ${input <= 0 ? "0.00" : subtotal.toFixed(2)}</Typography>
                     </DialogContent>
                     <DialogActions>
                         <Button variant="contained"
-                            disabled={input === 0 ? true : false}
+                            disabled={input <= 0 ? true : false}
                             onClick={() => onConfirmClick()}
                         >Confirm</Button>
                     </DialogActions>

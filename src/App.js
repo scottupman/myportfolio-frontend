@@ -20,7 +20,7 @@ function App() {
 
   function ShowNavbar() {
     if (userInfo.isLoggedIn) {
-      return <Navbar></Navbar>
+      return <Navbar username = {userInfo.username}></Navbar>
     }
     else return null
   }

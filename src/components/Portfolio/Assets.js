@@ -7,11 +7,12 @@ import TableRow from '@mui/material/TableRow';
 import Title from '../Title';
 import {Link} from 'react-router-dom';
 
+
 function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Assets({assets, currentPriceMap, profitLossMap}) {
+export default function Assets({assets, currentPriceMap}) {
 
   function getPrice(symbol)
   {
@@ -20,29 +21,6 @@ export default function Assets({assets, currentPriceMap, profitLossMap}) {
     
     let price = currentPriceMap.get(symbol);
     return price.toFixed(2);
-  }
-
-  function getProfitLoss(symbol)
-  {
-    if (profitLossMap.size === 0)
-      return;
-    
-    let profitLoss = profitLossMap.get(symbol);
-    return profitLoss.toFixed(2);
-  }
-
-  function setTextColor(profitLoss)
-  {
-    if (profitLoss > 0)
-      return "green"
-    else if (profitLoss < 0)
-      return "red"
-  }
-
-  function insertPositive(profitLoss)
-  {
-    if (profitLoss > 0)
-      return "+"
   }
 
   return (
@@ -55,7 +33,6 @@ export default function Assets({assets, currentPriceMap, profitLossMap}) {
             <TableCell>Name</TableCell>
             <TableCell>Quantity</TableCell>
             <TableCell>Price</TableCell>
-            <TableCell>P&L</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -65,7 +42,6 @@ export default function Assets({assets, currentPriceMap, profitLossMap}) {
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.quantity}</TableCell>
               <TableCell>${getPrice(row.symbol)}</TableCell>
-              <TableCell style = {{color: setTextColor(getProfitLoss(row.symbol))}}>{insertPositive(getProfitLoss(row.symbol))}{getProfitLoss(row.symbol)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
