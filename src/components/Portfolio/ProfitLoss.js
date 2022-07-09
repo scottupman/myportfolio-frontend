@@ -3,7 +3,7 @@ import Axios from "axios"
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material"
 import Title from "../Title"
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, matchPath } from "react-router-dom"
 export default function ProfitLoss(props) {
 
     // Figure out why profitLossElements doesn't show in the table
@@ -44,6 +44,7 @@ export default function ProfitLoss(props) {
         return data;
     }
 
+    // could replace this with the partitioning method for the original yh finance api
     const getQuotes = async (symbols) => {
         let quotes = {
             method: 'GET',
@@ -72,6 +73,7 @@ export default function ProfitLoss(props) {
             currentPriceMap.set(quote.symbol, quote.regularMarketPrice)
         })
 
+        console.log(currentPriceMap)
         return currentPriceMap;
     }
 

@@ -123,7 +123,7 @@ export default function DepositDialog({ username }) {
                         inputProps={{ min: 0, style: { fontSize: 40, textAlign: 'center' } }}
                         InputProps={{
                             disableUnderline: true,
-                            startAdornment: (<InputAdornment position="start"><AttachMoneyIcon/></InputAdornment>)
+                            startAdornment: (<InputAdornment position="start"><AttachMoneyIcon fontSize="large"/></InputAdornment>)
                         }}
                         placeholder="0.00"
                         onChange={handleTextField}

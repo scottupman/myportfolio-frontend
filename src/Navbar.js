@@ -15,6 +15,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TradeDialog from './components/SecurityPage/TradeDialog';
 import DepositDialog from './DepositDialog';
 import WithdrawDialog from './WithdrawDialog';
+//import yahooFinance from 'yahoo-finance2';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -56,25 +57,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function Navbar({username}) {
+export default function Navbar({ username, setUserInfo }) {
 
   let navigate = useNavigate()
 
   const pages = ["home", "portfolio"]
   const [showDeposit, setShowDeposit] = React.useState(false)
   const [showWithdraw, setShowWithdraw] = React.useState(false)
+  const [searchInput, setSearchInput] = React.useState("")
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  React.useEffect(() => {
+    //fetchSearchResults();
+  }, [searchInput])
 
-  const isMenuOpen = Boolean(anchorEl);
+  // const fetchSearchResults = async () =>{
+  //   const query = "bitcoin"
+  //   const result = await yahooFinance.search(query, {}, {devel: false})
+  //   console.log(result);
+  // }
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleNavPageClick = (e) => {
     navigate("/" + e.currentTarget.value)
@@ -85,27 +86,13 @@ export default function Navbar({username}) {
       console.log("value:", e.target.value)
   }
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
-    </Menu>
-  );
+  const onLogoutClick = () => 
+  {
+    setUserInfo({username: "", isLoggedIn: false})
+    navigate("/")
+  }
+
+ 
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -122,9 +109,9 @@ export default function Navbar({username}) {
                 {page}
               </Button>
             ))}
-            
-            <DepositDialog username = {username}></DepositDialog>
-            <WithdrawDialog username = {username}></WithdrawDialog>
+
+            <DepositDialog username={username}></DepositDialog>
+            <WithdrawDialog username={username}></WithdrawDialog>
           </Box>
           <Search>
             <SearchIconWrapper>
@@ -142,25 +129,24 @@ export default function Navbar({username}) {
                   onKeyDown={handleKeyPress}
                 />
               )}
-            /> 
+            />
           </Search>
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
             <IconButton
               size="large"
               edge="end"
               aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
               color="inherit"
             >
               <AccountCircle />
             </IconButton>
+            <Button
+              sx={{ my: 2, ml: 2, color: 'white', display: 'block' }}
+              onClick = {onLogoutClick}
+            >Logout</Button>
           </Box>
         </Toolbar>
       </AppBar>
-      {renderMenu}
     </Box>
   );
 }

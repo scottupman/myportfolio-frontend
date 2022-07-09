@@ -14,13 +14,13 @@ import Navbar from './Navbar';
 
 function App() {
   const [userInfo, setUserInfo] = useState({
-    isLoggedIn: true,
-    username: "justinwustin200"
+    isLoggedIn: false,
+    username: ""
   })
 
   function ShowNavbar() {
     if (userInfo.isLoggedIn) {
-      return <Navbar username = {userInfo.username}></Navbar>
+      return <Navbar username = {userInfo.username} setUserInfo = {setUserInfo}></Navbar>
     }
     else return null
   }
@@ -31,7 +31,7 @@ function App() {
         <>
         <ShowNavbar></ShowNavbar>
           <Routes>
-            <Route path="/" element={<Login></Login>} />
+            <Route path="/" element={<Login setUserInfo = {setUserInfo}></Login>} />
             <Route path="/register" element={<Register></Register>} />
             <Route path="/portfolio" element={<MyPortfolio username={userInfo.username}></MyPortfolio>} />
             <Route path="/securityinfo" element={<SecurityInfo username={userInfo.username}></SecurityInfo>} />
