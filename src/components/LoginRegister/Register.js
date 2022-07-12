@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Axios from 'axios'
 import Avatar from '@mui/material/Avatar';
 import { useNavigate } from "react-router";
-import { Button, Box, TextField, Grid, Container } from '@mui/material'
+import { Button, Box, TextField, Grid, Container, Alert } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -10,8 +10,8 @@ import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import {DesktopDatePicker} from "@mui/x-date-pickers/DesktopDatePicker"
 import format from 'date-fns/format'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { isNull } from "url/util";
@@ -41,9 +41,6 @@ const Register = () => {
     const todayString = new Date().toISOString().split('T')[0];
     const today = new Date(todayString);
     const minDate = new Date("1900-01-01")
-
-    console.log("today: " + today)
-    console.log("min date: " + minDate)
 
     const displayEmailHelperText = () => {
         if (email === "")
@@ -152,32 +149,25 @@ const Register = () => {
         fetchData();
     }, [])
 
-    useEffect(() => {
-        console.log("email is valid: " + emailValid);
-    }, [email])
-
-    useEffect(() => {
-        console.log("email is taken: " + emailTaken)
-    }, [email])
-
-    useEffect(() => {
-        console.log(takenEmails)
-    }, [takenEmails])
-
-
     // do this after clicking the register button0.
     const registerUser = async e => {
         e.preventDefault();
-        setDOB(format(DOB, 'yyyy-MM-dd'));
-        Axios.post('http://localhost:8080/user/register',
+
+        if (emailTaken || !emailValid || usernameTaken || !usernameValid) return;
+
+        let formattedDob = format(DOB, 'yyyy-MM-dd');
+        console.log(formattedDob);
+        Axios.post("http://localhost:8080/user",
             {
                 username: username,
                 password: password,
                 fname: fname,
                 lname: lname,
-                DOB: DOB,
+                dob: formattedDob,
+                email: email,
+                cashValue: 0.00,
             }
-        )
+        )//.then(response => navigate("/"));
     }
     return (
         <ThemeProvider theme={theme}>
@@ -197,7 +187,7 @@ const Register = () => {
                     <Typography component="h1" variant="h5">
                         Register
                     </Typography>
-                    <Box component="form" noValidate onSubmit={registerUser} sx={{ mt: 3 }}>
+                    <Box component="form" onSubmit={registerUser} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
@@ -264,6 +254,7 @@ const Register = () => {
                                         maxDate={today}
                                         minDate={minDate}
                                         onError={(reason, value) => {
+                                            setDobValid(false)
                                             switch (reason) {
                                                 case "invalidDate":
                                                     setDobHelperText("Invalid date format")
@@ -285,7 +276,7 @@ const Register = () => {
                                         disableFuture
                                         inputFormat="MM-dd-yyyy"
                                         value={DOB}
-                                        onChange={(newDOB) => { setDOB(newDOB); }} //handleDob(newDOB); validateDob(newDOB)
+                                        onChange={(newDOB) => { setDOB(newDOB); validateDob(newDOB) }} //handleDob(newDOB); 
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}

@@ -11,6 +11,7 @@ import { useState } from 'react';
 import SecurityInfo from './components/SecurityPage/SecurityInfo'
 import HomePage from './components/HomePage/HomePage';
 import Navbar from './Navbar';
+import UserProfile from 'components/UserProfile/UserProfile';
 
 function App() {
   const [userInfo, setUserInfo] = useState({
@@ -19,8 +20,8 @@ function App() {
   })
 
   function ShowNavbar() {
-    if (userInfo.isLoggedIn) {
-      return <Navbar username = {userInfo.username} setUserInfo = {setUserInfo}></Navbar>
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      return <Navbar username = {localStorage.getItem("username")} setUserInfo = {setUserInfo}></Navbar>
     }
     else return null
   }
@@ -33,9 +34,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Login setUserInfo = {setUserInfo}></Login>} />
             <Route path="/register" element={<Register></Register>} />
-            <Route path="/portfolio" element={<MyPortfolio username={userInfo.username}></MyPortfolio>} />
-            <Route path="/securityinfo" element={<SecurityInfo username={userInfo.username}></SecurityInfo>} />
+            <Route path="/portfolio" element={<MyPortfolio username = {localStorage.getItem("username")}></MyPortfolio>} />
+            <Route path="/securityinfo" element={<SecurityInfo username = {localStorage.getItem("username")}></SecurityInfo>} />
             <Route path="/home" element={<HomePage></HomePage>} />
+            <Route path = "/profile" element={<UserProfile username = {localStorage.getItem("username")}/>} />
           </Routes>
         </>
       </Router>

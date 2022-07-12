@@ -1,4 +1,5 @@
 import * as React from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -9,90 +10,113 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { Button } from '@mui/material';
+import { Button, Input, InputAdornment, inputClasses, makeStyles, TextField, useAutocomplete } from '@mui/material';
 import { useNavigate } from 'react-router';
+
 import Autocomplete from '@mui/material/Autocomplete';
 import TradeDialog from './components/SecurityPage/TradeDialog';
 import DepositDialog from './DepositDialog';
 import WithdrawDialog from './WithdrawDialog';
+import Axios from 'axios';
+import { ClassNames } from '@emotion/react';
 //import yahooFinance from 'yahoo-finance2';
-
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
 
 export default function Navbar({ username, setUserInfo }) {
 
   let navigate = useNavigate()
 
   const pages = ["home", "portfolio"]
-  const [showDeposit, setShowDeposit] = React.useState(false)
-  const [showWithdraw, setShowWithdraw] = React.useState(false)
   const [searchInput, setSearchInput] = React.useState("")
+  const [searchValue, setSearchValue] = React.useState(null);
+
+  // autocomplete
+  const [options, setOptions] = React.useState([{symbol: "BTC-USD", shortname: "Bitcoin-USD"}]);
 
   React.useEffect(() => {
-    //fetchSearchResults();
+    // if (searchInput !== "")
+    //   fetchSearchResults();
   }, [searchInput])
 
-  // const fetchSearchResults = async () =>{
-  //   const query = "bitcoin"
-  //   const result = await yahooFinance.search(query, {}, {devel: false})
-  //   console.log(result);
-  // }
+  React.useEffect(() => {
+    console.log("modified options")
+    console.log(options)
+  }, [options])
 
+  React.useEffect(() => {
+    console.log("search input...")
+    console.log(searchInput)
+  }, [searchInput])
+
+  // React.useEffect(() => {
+  //   console.log("search value...")
+  //   console.log(searchValue)
+
+  //   handleSearchValueState();
+  // }, [searchValue])
+
+  const fetchSearchResults = () => {
+    console.log(searchInput)
+    let search = {
+      method: 'GET',
+      url: 'https://yh-finance.p.rapidapi.com/auto-complete',
+      params: { q: searchInput, region: 'US' },
+      headers: {
+        'X-RapidAPI-Key': '122d1b3a3amshaea5e7dab62ae7fp1f22c9jsn2647a22ffe86',
+        'X-RapidAPI-Host': 'yh-finance.p.rapidapi.com'
+      }
+    };
+    Axios.request(search).then(response => {
+      let quotes = response.data.quotes;
+      if (quotes.length === 0) {
+        setOptions([])
+        return;
+      }
+
+      let temp = []
+      quotes.forEach(quote => {
+        temp.push({ symbol: quote.symbol, shortname: quote.shortname })
+      })
+      setOptions(temp);
+    })
+  }
 
   const handleNavPageClick = (e) => {
     navigate("/" + e.currentTarget.value)
   }
 
   const handleKeyPress = (e) => {
-    if (e.keyCode == 13) // enter button
+    if (e.keyCode === 13) // enter button
       console.log("value:", e.target.value)
   }
 
-  const onLogoutClick = () => 
-  {
-    setUserInfo({username: "", isLoggedIn: false})
+  const onLogoutClick = () => {
+    localStorage.clear();
+    setUserInfo({ username: "", isLoggedIn: false })
     navigate("/")
   }
 
- 
+  const handleSearchInput = (newInput) => {
+    if (newInput === "")
+      setOptions([])
+    
+    setSearchInput(newInput)
+  }
+
+  const handleSearchValue = (newValue) => {
+    console.log("search value...")
+    console.log(newValue)
+
+    const symbol = newValue.symbol;
+    navigate("/securityinfo", {state: {symbol: symbol}})
+    resetSearch();
+  }
+
+  const resetSearch = () => {
+    setSearchInput("")
+    setSearchValue(null)
+    setOptions([])
+  }
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -113,40 +137,85 @@ export default function Navbar({ username, setUserInfo }) {
             <DepositDialog username={username}></DepositDialog>
             <WithdrawDialog username={username}></WithdrawDialog>
           </Box>
-          <Search>
+          <Autocomplete
+            freeSolo
+            sx={{ width: 300 }}
+            id="free-solo-demo"
+            value={searchValue}
+            onChange={(event, newValue) => handleSearchValue(newValue)}
+            getOptionLabel={(option) => option.symbol}
+            inputValue={searchInput}
+            onInputChange={(event, newInput) => handleSearchInput(newInput)}
+            openOnFocus={options.length > 0}
+            options={options}
+            onKeyDown = {e => handleKeyPress(e)}
+            filterOptions={(x) => x}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className="textfield"
+                sx={{ input: { color: 'white' } }}
+                variant="outlined"
+                id="input-with-icon-textfield"
+                placeholder='Search...'
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start" sx={{ color: 'white' }}>
+                      <SearchIcon />
+                    </InputAdornment>
+                  )
+
+                }}
+              />
+            )}
+            renderOption={(props, option) => (
+              <li {...props}>({option.symbol}) {option.shortname}</li>
+              // <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+              //   {(option.symbol)} {option.shortname}
+              // </Box>
+            )}
+          />
+
+          {/* <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <Autocomplete
               freeSolo
-              id="search"
-              options={["hi"]}
+              sx={{ width: 300 }}
+              id="free-solo-demo"
+              getOptionLabel={(option) => option.symbol}
+              open={options.length > 0}
+              options={options}
+              filterOptions={(x) => x}
               renderInput={(params) => (
-                <StyledInputBase
+                <StyledInput
                   {...params}
-                  placeholder="Search a Symbol"
+                  placeholder='Search...'
                   inputProps={{ 'aria-label': 'search' }}
-                  onKeyDown={handleKeyPress}
                 />
               )}
             />
-          </Search>
+          </Search> */}
+
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton
               size="large"
               edge="end"
               aria-label="account of current user"
               color="inherit"
+              href='/profile'
             >
               <AccountCircle />
             </IconButton>
             <Button
               sx={{ my: 2, ml: 2, color: 'white', display: 'block' }}
-              onClick = {onLogoutClick}
+              onClick={onLogoutClick}
             >Logout</Button>
           </Box>
         </Toolbar>
       </AppBar>
-    </Box>
+    </Box >
   );
 }

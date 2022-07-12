@@ -65,6 +65,7 @@ export default function ProfitLoss(props) {
     const createCurrentPriceMap = async () => {
         let currentPriceMap = new Map();
         let tradedSymbols = await getTradedSymbols();
+        if (tradedSymbols.length === 0) return;
         let symbolString = tradedSymbols.join(",");
 
         const quotes = await getQuotes(symbolString);

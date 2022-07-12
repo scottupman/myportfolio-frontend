@@ -45,6 +45,8 @@ const Login = (props) => {
       }
     )
     .then(response => {
+      localStorage.setItem("username", username)
+      localStorage.setItem("isLoggedIn", "true")
       setUserInfo({isLoggedIn: true, username: username});
       navigate("/home")
     })

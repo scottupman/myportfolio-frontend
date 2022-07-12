@@ -54,7 +54,8 @@ const MyPortfolio = ({username}) => {
     const initializePortfolio = async () => {
         // call functions here
         assets = await initializeAssets();
-        setMyAssets(assets);
+        if (assets.length > 0)
+            setMyAssets(assets);
         buyingPower = await getBuyingPower();
         setCashValue(buyingPower);
         initializePortfolioValue();
@@ -66,7 +67,12 @@ const MyPortfolio = ({username}) => {
         let crypto = 0.00;
 
         let symbols = await getSymbols(); // symbols that user owns
-
+        if (symbols.length === 0)
+        {
+            setNetWorth(buyingPower);
+            return;
+        }
+            
         const partitionSize = 10;
         if (symbols.length < partitionSize) {
             let symbolString = symbols.join(",");
@@ -196,7 +202,7 @@ const MyPortfolio = ({username}) => {
                     }
                     labels={["Cash", "Stocks", "Crypto"]} />
                 <Typography marginTop={2} variant="h3" component='div' fontSize={35}>
-                    Net worth: ${Math.floor(netWorth * 100) / 100}
+                    Net worth: ${(Math.floor(netWorth * 100) / 100).toFixed(2)}
                 </Typography>
 
                 <Grid container spacing = {2} direction = "column" style={{width: '1000px'}}>
