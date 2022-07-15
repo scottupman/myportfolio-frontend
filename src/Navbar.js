@@ -30,11 +30,11 @@ export default function Navbar({ username, setUserInfo }) {
   const [searchValue, setSearchValue] = React.useState(null);
 
   // autocomplete
-  const [options, setOptions] = React.useState([{symbol: "BTC-USD", shortname: "Bitcoin-USD"}]);
+  const [options, setOptions] = React.useState([]);
 
   React.useEffect(() => {
-    // if (searchInput !== "")
-    //   fetchSearchResults();
+    if (searchInput !== "")
+      fetchSearchResults();
   }, [searchInput])
 
   React.useEffect(() => {
@@ -86,7 +86,7 @@ export default function Navbar({ username, setUserInfo }) {
 
   const handleKeyPress = (e) => {
     if (e.keyCode === 13) // enter button
-      console.log("value:", e.target.value)
+      console.log("value: " + e.target.value)
   }
 
   const onLogoutClick = () => {
@@ -139,7 +139,7 @@ export default function Navbar({ username, setUserInfo }) {
           </Box>
           <Autocomplete
             freeSolo
-            sx={{ width: 300 }}
+            sx={{ width: 400 }}
             id="free-solo-demo"
             value={searchValue}
             onChange={(event, newValue) => handleSearchValue(newValue)}

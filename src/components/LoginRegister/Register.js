@@ -159,7 +159,7 @@ const Register = () => {
         console.log(formattedDob);
         Axios.post("http://localhost:8080/user",
             {
-                username: username,
+                username: username.toLowerCase(),
                 password: password,
                 fname: fname,
                 lname: lname,
@@ -167,7 +167,7 @@ const Register = () => {
                 email: email,
                 cashValue: 0.00,
             }
-        )//.then(response => navigate("/"));
+        ).then(response => navigate("/"));
     }
     return (
         <ThemeProvider theme={theme}>

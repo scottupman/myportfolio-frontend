@@ -40,12 +40,12 @@ const Login = (props) => {
     e.preventDefault();
     Axios.put("http://localhost:8080/user",
       {
-        username: username,
+        username: username.toLowerCase(),
         password: password
       }
     )
     .then(response => {
-      localStorage.setItem("username", username)
+      localStorage.setItem("username", username.toLowerCase())
       localStorage.setItem("isLoggedIn", "true")
       setUserInfo({isLoggedIn: true, username: username});
       navigate("/home")

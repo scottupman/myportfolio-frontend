@@ -12,7 +12,7 @@ import TradeDialog from './TradeDialog'
 const SecurityInfo = ({ username }) => {
     const location = useLocation()
     // @ts-ignore
-    const symbol = location.state.symbol;
+    let symbol = location.state.symbol;
 
     var quote =
     {
@@ -53,11 +53,11 @@ const SecurityInfo = ({ username }) => {
     useEffect(() => {
         // get api data here
         fetchData();
-    }, [])
+    }, [symbol])
 
     useEffect(() => {
         fetchChartData();
-    }, [chartRange])
+    }, [chartRange, symbol])
 
     useEffect(() => {
         if (currentPrice < 1)

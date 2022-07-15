@@ -47,7 +47,6 @@ export default function UserProfile({ username }) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         width: 500,
-                        border: 2,
                     }}
                 >
                     <Grid
@@ -55,7 +54,6 @@ export default function UserProfile({ username }) {
                         direction="column"
                         alignItems="center"
                         justifyContent="center"
-                        border={2}
                     >
                         <Grid item >
                             <Typography variant="h6" component="div">First name:</Typography>
