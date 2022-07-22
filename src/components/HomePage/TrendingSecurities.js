@@ -52,6 +52,26 @@ export default function TrendingSecurities() {
         );
     }
 
+    function roundDown(price)
+    {
+        if (price < 1)
+            return (Math.floor(price * 100) / 100).toFixed(6);
+        else if (price > 1)
+            return (Math.floor(price * 100) / 100).toFixed(2);
+        else
+            return 0.00;
+    }
+
+    function displayPriceChange(price, priceChange)
+    {
+        if (price < 1)
+            return (Math.floor(priceChange * 100) / 100).toFixed(6);
+        else if (price > 1)
+            return (Math.floor(priceChange * 100) / 100).toFixed(2);
+        else
+            return 0.00;
+    }
+
     return (
         <React.Fragment>
                 <Title>Trending</Title>
@@ -72,8 +92,8 @@ export default function TrendingSecurities() {
                                 <TableCell><Link to="/securityinfo" state={{ symbol: row.symbol }}>{row.symbol}</Link></TableCell>
                                 <TableCell>{row.shortName}</TableCell>
                                 <TableCell>{toTitleCase(row.quoteType)}</TableCell>
-                                <TableCell>${row.regularMarketPrice}</TableCell>
-                                <TableCell style={{ color: setTextColor(row.regularMarketChange) }}>{insertPositive(row.regularMarketChange)}{row.regularMarketChange.toFixed(2)}</TableCell>
+                                <TableCell>${roundDown(row.regularMarketPrice)}</TableCell>
+                                <TableCell style={{ color: setTextColor(row.regularMarketChange) }}>{insertPositive(row.regularMarketChange)}{displayPriceChange(row.regularMarketPrice, row.regularMarketChange)}</TableCell>
                                 <TableCell style={{ color: setTextColor(row.regularMarketChangePercent) }}>{insertPositive(row.regularMarketChangePercent)}{row.regularMarketChangePercent.toFixed(2)}%</TableCell>
                             </TableRow>
                         ))}

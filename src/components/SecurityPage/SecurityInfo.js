@@ -49,10 +49,12 @@ const SecurityInfo = ({ username }) => {
     const [chartRange, setChartRange] = useState('1mo')
     const [quoteType, setQuoteType] = useState('');
     const [isLessThanOne, setIsLessThanOne] = useState(false)
+    const [newsContent, setNewsContent] = useState([]);
 
     useEffect(() => {
         // get api data here
         fetchData();
+        fetchNewsData();
     }, [symbol])
 
     useEffect(() => {
@@ -102,6 +104,48 @@ const SecurityInfo = ({ username }) => {
         setChartData(data.indicators.quote[0].close)
     }
 
+    const fetchNewsData = async () => {
+        let newsList =
+        {
+            method: 'POST',
+            url: 'https://yh-finance.p.rapidapi.com/news/v2/list',
+            params: {
+                region: 'US',
+                s: symbol
+            },
+            headers: {
+                'X-RapidAPI-Key': '122d1b3a3amshaea5e7dab62ae7fp1f22c9jsn2647a22ffe86',
+                'X-RapidAPI-Host': 'yh-finance.p.rapidapi.com'
+            }
+        }
+
+        let content =
+        {
+            method: 'GET',
+            url: 'https://yh-finance.p.rapidapi.com/news/v2/get-details',
+            params: {
+                uuid: null
+            },
+            headers: {
+                'X-RapidAPI-Key': '122d1b3a3amshaea5e7dab62ae7fp1f22c9jsn2647a22ffe86',
+                'X-RapidAPI-Host': 'yh-finance.p.rapidapi.com'
+            }
+        }
+
+        Axios.request(newsList).then(response => {
+            let streams = response.data.data.main.stream;
+            let streamIds = []
+            streams.forEach(stream => {
+                streamIds.push(stream.id);
+            })
+            content.params.uuid = streamIds.join(",");
+            Axios.request(content).then(response => {
+                let newsContent = response.data.data.contents;
+                setNewsContent(newsContent);
+            });
+        })
+    }
+
     function setTextColor() {
         if (priceDif > 0)
             return "green"
@@ -132,7 +176,7 @@ const SecurityInfo = ({ username }) => {
         }
     };
 
-    const displayMonetaryValue = (value) =>{
+    const displayMonetaryValue = (value) => {
         if (isLessThanOne)
             return value.toFixed(6);
         else
@@ -190,7 +234,7 @@ const SecurityInfo = ({ username }) => {
                 </Grid>
             </Grid>
 
-            <Box sx={{ width: '1000px', marginTop: '50px'}}>
+            <Box sx={{ width: '1000px', marginTop: '50px' }}>
                 <Grid container direction='row'>
                     <Grid item>
                         <ToggleButtonGroup value={chartRange} sx={{ marginLeft: '30px' }} onChange={handleChartRange} exclusive>
@@ -215,6 +259,13 @@ const SecurityInfo = ({ username }) => {
                     </Grid>
                 </Grid>
                 <LineChart labels={chartLabels} data={chartData}></LineChart>
+                <Typography sx={{ fontSize: 35, mt: 5 }} variant='h3' component='div'>Relevant Articles</Typography>
+                <Grid container direction='column' sx={{ fontSize: 25 }}>
+                    {newsContent.map(elem => {
+                        let url = elem.content.canonicalUrl.url;
+                        return <div style={{ paddingBottom: 20 }}><a href={`${url}`} target="_blank" rel="noopener noreferrer">{elem.content.title}</a></div>
+                    })}
+                </Grid>
             </Box>
         </Box >
     )

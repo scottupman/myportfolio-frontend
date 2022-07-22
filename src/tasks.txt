@@ -1,3 +1,5 @@
 1. do search feature on pressing enter button
+2. Search feature doesn't work if you type too fast and is inconsistent
+3. include news articles below your graph on the securityInfo from an API.
 
-After this you should be done :)
+Dr.Hendrix really likes the project so far :)

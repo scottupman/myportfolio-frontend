@@ -47,6 +47,8 @@ export default function Navbar({ username, setUserInfo }) {
     console.log(searchInput)
   }, [searchInput])
 
+ 
+
   // React.useEffect(() => {
   //   console.log("search value...")
   //   console.log(searchValue)
@@ -85,99 +87,102 @@ export default function Navbar({ username, setUserInfo }) {
   }
 
   const handleKeyPress = (e) => {
-    if (e.keyCode === 13) // enter button
-      console.log("value: " + e.target.value)
+    // enter button
+    if (e.keyCode === 13 && options.length > 0) {
+      console.log(options[0])
+      setSearchValue(options[0])
+    }
   }
 
-  const onLogoutClick = () => {
-    localStorage.clear();
-    setUserInfo({ username: "", isLoggedIn: false })
-    navigate("/")
-  }
+const onLogoutClick = () => {
+  localStorage.clear();
+  setUserInfo({ username: "", isLoggedIn: false })
+  navigate("/")
+}
 
-  const handleSearchInput = (newInput) => {
-    if (newInput === "")
-      setOptions([])
-    
-    setSearchInput(newInput)
-  }
-
-  const handleSearchValue = (newValue) => {
-    console.log("search value...")
-    console.log(newValue)
-
-    const symbol = newValue.symbol;
-    navigate("/securityinfo", {state: {symbol: symbol}})
-    resetSearch();
-  }
-
-  const resetSearch = () => {
-    setSearchInput("")
-    setSearchValue(null)
+const handleSearchInput = (newInput) => {
+  if (newInput === "")
     setOptions([])
-  }
+
+  setSearchInput(newInput)
+}
+
+const handleSearchValue = (newValue) => {
+  console.log("search value...")
+  console.log(newValue)
+
+  const symbol = newValue.symbol;
+  navigate("/securityinfo", { state: { symbol: symbol } })
+  resetSearch();
+}
+
+const resetSearch = () => {
+  setSearchInput("")
+  setSearchValue(null)
+  setOptions([])
+}
 
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleNavPageClick}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-                value={page}
-              >
-                {page}
-              </Button>
-            ))}
+return (
+  <Box sx={{ flexGrow: 1 }}>
+    <AppBar position="static">
+      <Toolbar>
+        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          {pages.map((page) => (
+            <Button
+              key={page}
+              onClick={handleNavPageClick}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+              value={page}
+            >
+              {page}
+            </Button>
+          ))}
 
-            <DepositDialog username={username}></DepositDialog>
-            <WithdrawDialog username={username}></WithdrawDialog>
-          </Box>
-          <Autocomplete
-            freeSolo
-            sx={{ width: 400 }}
-            id="free-solo-demo"
-            value={searchValue}
-            onChange={(event, newValue) => handleSearchValue(newValue)}
-            getOptionLabel={(option) => option.symbol}
-            inputValue={searchInput}
-            onInputChange={(event, newInput) => handleSearchInput(newInput)}
-            openOnFocus={options.length > 0}
-            options={options}
-            onKeyDown = {e => handleKeyPress(e)}
-            filterOptions={(x) => x}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className="textfield"
-                sx={{ input: { color: 'white' } }}
-                variant="outlined"
-                id="input-with-icon-textfield"
-                placeholder='Search...'
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start" sx={{ color: 'white' }}>
-                      <SearchIcon />
-                    </InputAdornment>
-                  )
+          <DepositDialog username={username}></DepositDialog>
+          <WithdrawDialog username={username}></WithdrawDialog>
+        </Box>
+        <Autocomplete
+          freeSolo
+          sx={{ width: 400 }}
+          id="free-solo-demo"
+          value={searchValue}
+          onChange={(event, newValue) => handleSearchValue(newValue)}
+          getOptionLabel={(option) => option.symbol}
+          inputValue={searchInput}
+          onInputChange={(event, newInput) => handleSearchInput(newInput)}
+          openOnFocus={options.length > 0}
+          options={options}
+          onKeyDown={e => handleKeyPress(e)}
+          filterOptions={(x) => x}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className="textfield"
+              sx={{ input: { color: 'white' } }}
+              variant="outlined"
+              id="input-with-icon-textfield"
+              placeholder='Search...'
+              InputProps={{
+                ...params.InputProps,
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ color: 'white' }}>
+                    <SearchIcon />
+                  </InputAdornment>
+                )
 
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>({option.symbol}) {option.shortname}</li>
-              // <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-              //   {(option.symbol)} {option.shortname}
-              // </Box>
-            )}
-          />
+              }}
+            />
+          )}
+          renderOption={(props, option) => (
+            <li {...props}>({option.symbol}) {option.shortname}</li>
+            // <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+            //   {(option.symbol)} {option.shortname}
+            // </Box>
+          )}
+        />
 
-          {/* <Search>
+        {/* <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -199,23 +204,23 @@ export default function Navbar({ username, setUserInfo }) {
             />
           </Search> */}
 
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              color="inherit"
-              href='/profile'
-            >
-              <AccountCircle />
-            </IconButton>
-            <Button
-              sx={{ my: 2, ml: 2, color: 'white', display: 'block' }}
-              onClick={onLogoutClick}
-            >Logout</Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box >
-  );
+        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <IconButton
+            size="large"
+            edge="end"
+            aria-label="account of current user"
+            color="inherit"
+            href='/profile'
+          >
+            <AccountCircle />
+          </IconButton>
+          <Button
+            sx={{ my: 2, ml: 2, color: 'white', display: 'block' }}
+            onClick={onLogoutClick}
+          >Logout</Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  </Box >
+);
 }
