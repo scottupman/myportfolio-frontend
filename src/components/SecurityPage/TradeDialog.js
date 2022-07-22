@@ -187,6 +187,8 @@ export default function TradeDialog(props) {
         if (quoteType.toUpperCase() === "CRYPTOCURRENCY") {
             if (method.toUpperCase() === "CASH")
                 quantity = input / currentPrice; // input would be cash
+            else
+                quantity = input;
         }
         else quantity = input; // input here is quantity
 

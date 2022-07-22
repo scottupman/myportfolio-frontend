@@ -1,60 +1,46 @@
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
-import  Axios  from "axios";
+import Axios from "axios";
 import Title from "../Title"
 import React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function Trades({username}){
-    
-    const [trades, setTrades] = useState([])
+export default function Trades({ username }) {
 
-    useEffect(() => {
-        fetchData();
-    }, [])
+  const [trades, setTrades] = useState([])
 
-    const fetchData = () =>{
-        getTrades(username)
-    }
+  useEffect(() => {
+    fetchData();
+  }, [])
 
-    const getTrades = async (username) =>{
-        let url = `http://localhost:8080/trades/${username}`
-        const response = await Axios.get(url);
-        const trades = response.data;
-        setTrades(trades);
-    }
-
-    const displayMonetaryValue = (value) =>{
-      if (value < 1)
-          return value.toFixed(6);
-      else
-          return value.toFixed(2);
+  const fetchData = () => {
+    getTrades(username)
   }
 
-    const convertToDate = (securityType, timestamp) =>{
-        var date = new Date(timestamp * 1000);
-        if (securityType.toUpperCase() === "EQUITY")
-        {
-            let dateFormat = date.toLocaleString('en-US', {timeZoneName: 'short'})
-            return dateFormat;
-        }
-        else if (securityType.toUpperCase() === "CRYPTOCURRENCY")
-        {
-            let month = date.getUTCMonth();
-            let day = date.getUTCDate();
-            let year = date.getUTCFullYear();
-            let hours = date.getUTCHours();
-            let minutes = date.getUTCMinutes();
-            let seconds = date.getUTCSeconds();
+  const getTrades = async (username) => {
+    let url = `http://localhost:8080/trades/${username}`
+    const response = await Axios.get(url);
+    const trades = response.data;
+    setTrades(trades);
+  }
 
-            let formattedTime = month + "/" + day + "/" + year + ", " + hours + ":" + minutes + ":" + seconds + " UTC"
-            return formattedTime;
-            
-        }
-    }
+  const displayMonetaryValue = (value) => {
+    if (value < 1)
+      return value.toFixed(6);
+    else
+      return value.toFixed(2);
+  }
 
-    return (
-        <React.Fragment>
+  const convertToDate = (timestamp) => {
+    var date = new Date(timestamp * 1000);
+
+    let dateFormat = date.toLocaleString('en-US', { timeZoneName: 'short' })
+    return dateFormat;
+
+  }
+
+  return (
+    <React.Fragment>
       <Title>My Trades</Title>
       <Table size="small">
         <TableHead>
@@ -70,16 +56,16 @@ export default function Trades({username}){
         <TableBody>
           {trades.map(trade => (
             <TableRow key={trade.id}>
-              <TableCell><Link to='/securityinfo' state={{symbol: trade.symbol}}>{trade.symbol}</Link></TableCell>
+              <TableCell><Link to='/securityinfo' state={{ symbol: trade.symbol }}>{trade.symbol}</Link></TableCell>
               <TableCell>{trade.name}</TableCell>
               <TableCell>{trade.type}</TableCell>
               <TableCell>{trade.quantity}</TableCell>
               <TableCell>${displayMonetaryValue(trade.price)}</TableCell>
-              <TableCell>{convertToDate(trade.securityType, trade.timestamp)}</TableCell>
+              <TableCell>{convertToDate(trade.timestamp)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </React.Fragment>
-    )
+  )
 }
