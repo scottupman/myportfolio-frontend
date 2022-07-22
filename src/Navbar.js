@@ -47,6 +47,11 @@ export default function Navbar({ username, setUserInfo }) {
     console.log(searchInput)
   }, [searchInput])
 
+  React.useEffect(() => {
+    console.log("search value...")
+    console.log(searchValue)
+  }, [searchValue])
+
  
 
   // React.useEffect(() => {
@@ -88,9 +93,12 @@ export default function Navbar({ username, setUserInfo }) {
 
   const handleKeyPress = (e) => {
     // enter button
-    if (e.keyCode === 13 && options.length > 0) {
+    if (e.keyCode === 13 && options.length > 0 && e.target.value) {
       console.log(options[0])
-      setSearchValue(options[0])
+      const element = options[0];
+      console.log("element...")
+      console.log(element)
+      setSearchValue(element)
     }
   }
 
@@ -107,9 +115,13 @@ const handleSearchInput = (newInput) => {
   setSearchInput(newInput)
 }
 
-const handleSearchValue = (newValue) => {
-  console.log("search value...")
-  console.log(newValue)
+const handleSearchValue = (event, newValue) => {
+  if (event.keyCode === 13 && options.length > 0)
+  {
+    setSearchValue(options[0]);
+    return;
+  }
+    
 
   const symbol = newValue.symbol;
   navigate("/securityinfo", { state: { symbol: symbol } })
@@ -118,7 +130,7 @@ const handleSearchValue = (newValue) => {
 
 const resetSearch = () => {
   setSearchInput("")
-  setSearchValue(null)
+  //setSearchValue(null)
   setOptions([])
 }
 
@@ -147,13 +159,13 @@ return (
           sx={{ width: 400 }}
           id="free-solo-demo"
           value={searchValue}
-          onChange={(event, newValue) => handleSearchValue(newValue)}
-          getOptionLabel={(option) => option.symbol}
+          getOptionLabel={}
+          onChange={(event, newValue) => handleSearchValue(event, newValue)}
           inputValue={searchInput}
           onInputChange={(event, newInput) => handleSearchInput(newInput)}
           openOnFocus={options.length > 0}
           options={options}
-          onKeyDown={e => handleKeyPress(e)}
+          //onKeyDown={e => handleKeyPress(e)}
           filterOptions={(x) => x}
           renderInput={(params) => (
             <TextField
