@@ -116,9 +116,12 @@ const handleSearchInput = (newInput) => {
 }
 
 const handleSearchValue = (event, newValue) => {
+  console.log(event)
   if (event.keyCode === 13 && options.length > 0)
   {
-    setSearchValue(options[0]);
+    console.log('ran')
+    navigate("/securityinfo", { state: { symbol: options[0].symbol } })
+    resetSearch();
     return;
   }
     
@@ -130,7 +133,7 @@ const handleSearchValue = (event, newValue) => {
 
 const resetSearch = () => {
   setSearchInput("")
-  //setSearchValue(null)
+  setSearchValue(null)
   setOptions([])
 }
 
@@ -159,13 +162,12 @@ return (
           sx={{ width: 400 }}
           id="free-solo-demo"
           value={searchValue}
-          getOptionLabel={}
+          getOptionLabel={(option) => option.symbol}
           onChange={(event, newValue) => handleSearchValue(event, newValue)}
           inputValue={searchInput}
           onInputChange={(event, newInput) => handleSearchInput(newInput)}
           openOnFocus={options.length > 0}
           options={options}
-          //onKeyDown={e => handleKeyPress(e)}
           filterOptions={(x) => x}
           renderInput={(params) => (
             <TextField
